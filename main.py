@@ -117,13 +117,15 @@ class UserManager:
 
     def sort(self):
         pass
+
     def scoreboard(self):
         users = self.users.copy()
 
-        users.sort(key=lambda user: user.score, reverse=True)
+        users.sort(key=lambda user: (user.score, user.wins, user.draws, -user.loses), reverse=True)
 
         for user in users:
             print(user.username, user.score, user.wins, user.draws, user.loses)
+
 
 
 class Piece:
@@ -311,7 +313,8 @@ class Rook(Piece):
         self.y = 0
         self.moved = False
 
-    def __str__(self):return "R" + self.color[0]
+    def __str__(self):
+        return "R" + self.color[0]
 
     def move(self,x, y, board):
         # if # can not move thi this spot blah blah blah:
@@ -1003,8 +1006,14 @@ sys.stdout = output_file
 while True:
 
     parts = input().strip().split()
-    if user_manager.logged_out and parts[0] != "login":
+
+    if len(parts) == 0:
+        break
+
+    if user_manager.logged_out and parts[0] != "login" and parts[0] != "register" and parts[0] != "exit":
         parts = ["logged_out"]
+
+
 
     if parts[0] == "register":
         if len(parts) == 3:
@@ -1095,5 +1104,13 @@ while True:
             user_manager.scoreboard()
         else:
             print("invalid command")
+    
+    elif parts[0] == "forfeit":
+        if len(parts) == 1:
+            game.forfeit()
+        else:
+            print("invalid command")
+
+
     else:
         print("invalid command")
